@@ -1,0 +1,465 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK Local Shop</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            scroll-behavior: smooth;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        /* Hero Section */
+        #hero {
+            position: relative;
+            height: 100vh;
+            background-image: url('https://i.ibb.co/23SjQdNz/IMG-20260219-133317.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        #hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        #hero h1 {
+            font-size: 3rem;
+            z-index: 1;
+            margin-bottom: 10px;
+        }
+
+        #hero p {
+            font-size: 1.5rem;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        #hero button {
+            z-index: 1;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #hero button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        /* Products Section */
+        #products {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        #products h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 20px;
+            padding-bottom: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .product-card {
+            flex: 0 0 300px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .product-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            font-size: 1.1rem;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .product-card button {
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .product-card button:hover {
+            background-color: #1E88E5;
+        }
+
+        /* Cart Floating Icon */
+        #cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #FF5722;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        #cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #F44336;
+            color: white;
+            font-size: 0.8rem;
+            padding: 5px 8px;
+            border-radius: 50%;
+        }
+
+        /* Cart Modal */
+        #cart-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        #cart-items {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item span {
+            flex: 1;
+        }
+
+        #total-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #send-order {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #send-order:hover {
+            background-color: #45a049;
+        }
+
+        /* WhatsApp Button */
+        #whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25D366;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #hero h1 {
+                font-size: 2rem;
+            }
+
+            #hero p {
+                font-size: 1.2rem;
+            }
+
+            .product-card {
+                flex: 0 0 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section id="hero">
+        <h1>SK Local Shop</h1>
+        <p>“Fresh Finds, Best Prices”</p>
+        <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'});">Shop Now</button>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products">
+        <h2>Our Products</h2>
+        <div class="carousel">
+            <div class="product-card" data-name="Fresh Apples" data-price="2.99">
+                <img src="https://i.ibb.co/23SjQdNz/IMG-20260219-133317.jpg" alt="Fresh Apples">
+                <h3>Fresh Apples</h3>
+                <p>$2.99</p>
+                <button onclick="addToCart(this)">Add to Cart</button>
+            </div>
+            <div class="product-card" data-name="Organic Bananas" data-price="1.99">
+                <img src="https://i.ibb.co/GvPgmQX7/IMG-20260228-224102.jpg" alt="Organic Bananas">
+                <h3>Organic Bananas</h3>
+                <p>$1.99</p>
+                <button onclick="addToCart(this)">Add to Cart</button>
+            </div>
+            <div class="product-card" data-name="Fresh Milk" data-price="3.49">
+                <img src="https://i.ibb.co/LXLHPNj3/IMG-20260228-224021.jpg" alt="Fresh Milk">
+                <h3>Fresh Milk</h3>
+                <p>$3.49</p>
+                <button onclick="addToCart(this)">Add to Cart</button>
+            </div>
+            <div class="product-card" data-name="Whole Grain Bread" data-price="2.49">
+                <img src="https://i.ibb.co/5DtQfJv/IMG-20260228-224047.jpg" alt="Whole Grain Bread">
+                <h3>Whole Grain Bread</h3>
+                <p>$2.49</p>
+                <button onclick="addToCart(this)">Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Icon -->
+    <div id="cart-icon" onclick="openCart()">
+        🛒
+        <span id="cart-count">0</span>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCart()">&times;</span>
+            <h2>Your Cart</h2>
+            <div id="cart-items"></div>
+            <p id="total-price">Total: $0.00</p>
+            <form id="order-form">
+                <input type="text" id="customer-name" placeholder="Your Name" required>
+                <input type="tel" id="customer-phone" placeholder="Phone Number" required>
+                <input type="email" id="customer-email" placeholder="Email (optional)">
+                <button type="button" id="send-order" onclick="sendOrder()">Send Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- WhatsApp Button -->
+    <a id="whatsapp-btn" href="https://wa.me/7828951832" target="_blank">💬</a>
+
+    <!-- EmailJS Script -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+        // Initialize EmailJS with your user ID (replace 'YOUR_USER_ID' with actual from EmailJS dashboard)
+        emailjs.init('YOUR_USER_ID'); // Get this from EmailJS after signing up
+
+        // Cart logic
+        let cart = [];
+
+        function addToCart(button) {
+            const card = button.parentElement;
+            const name = card.dataset.name;
+            const price = parseFloat(card.dataset.price);
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name, price, quantity: 1 });
+            }
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cart-count').textContent = count;
+        }
+
+        function openCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.style.display = 'flex';
+            renderCartItems();
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        function renderCartItems() {
+            const itemsContainer = document.getElementById('cart-items');
+            itemsContainer.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('cart-item');
+                div.innerHTML = `
+                    <span>${item.name}</span>
+                    <span>Qty: ${item.quantity}</span>
+                    <span>$${ (item.price * item.quantity).toFixed(2) }</span>
+                `;
+                itemsContainer.appendChild(div);
+                total += item.price * item.quantity;
+            });
+            document.getElementById('total-price').textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        function sendOrder() {
+            const name = document.getElementById('customer-name').value;
+            const phone = document.getElementById('customer-phone').value;
+            const email = document.getElementById('customer-email').value || 'Not provided';
+            if (!name || !phone) {
+                alert('Please fill in name and phone number.');
+                return;
+            }
+
+            let orderDetails = 'Ordered Items:\n';
+            cart.forEach(item => {
+                orderDetails += `${item.name} - Qty: ${item.quantity} - Price: $${(item.price * item.quantity).toFixed(2)}\n`;
+            });
+            const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
+
+            const templateParams = {
+                customer_name: name,
+                customer_phone: phone,
+                customer_email: email,
+                order_details: orderDetails,
+                total_price: total,
+                to_email: 'shivamkush901@gmail.com' // Owner's email
+            };
+
+            // Replace 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' with actual from EmailJS
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+                .then(() => {
+                    alert('Order sent successfully!');
+                    cart = [];
+                    updateCartCount();
+                    closeCart();
+                }, (error) => {
+                    alert('Failed to send order. Please try again.');
+                    console.error(error);
+                });
+        }
+
+        // Auto-sliding carousel (optional, every 5 seconds)
+        const carousel = document.querySelector('.carousel');
+        let scrollAmount = 0;
+        const slideWidth = 320; // Approximate width + gap
+
+        setInterval(() => {
+            scrollAmount += slideWidth;
+            if (scrollAmount >= carousel.scrollWidth) {
+                scrollAmount = 0;
+            }
+            carousel.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+        }, 5000);
+    </script>
+</body>
+</html>
+```
