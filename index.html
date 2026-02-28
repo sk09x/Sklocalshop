@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SK Local Shop</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background:#f8f9fa;color:#333;overflow-x:hidden;}
+
+header{
+height:100vh;
+background:url('https://i.ibb.co/23SjQdNz/IMG-20260219-133317.jpg') center/cover no-repeat;
+display:flex;flex-direction:column;justify-content:center;align-items:center;
+text-align:center;color:#fff;position:relative;
+}
+header::after{
+content:"";position:absolute;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.5);
+}
+.hero-content{position:relative;z-index:2;}
+.hero-content h1{font-size:2.5rem;font-weight:600;}
+.hero-content p{margin:10px 0 20px;}
+.btn{
+background:#ff6b6b;color:#fff;padding:12px 25px;
+border:none;border-radius:30px;cursor:pointer;
+transition:0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+.btn:hover{background:#ff4757;transform:translateY(-2px);}
+
+section{padding:60px 20px;}
+.section-title{text-align:center;margin-bottom:30px;font-size:1.8rem;}
+
+.carousel{
+display:flex;overflow-x:auto;gap:20px;scroll-snap-type:x mandatory;
+padding-bottom:10px;
+}
+.carousel::-webkit-scrollbar{display:none;}
+
+.product{
+min-width:250px;background:#fff;border-radius:15px;
+box-shadow:0 4px 20px rgba(0,0,0,0.08);
+padding:15px;text-align:center;scroll-snap-align:start;
+transition:0.3s;
+}
+.product:hover{transform:translateY(-5px);}
+.product img{width:100%;border-radius:10px;}
+.product h3{margin:10px 0 5px;}
+.product p{font-weight:600;color:#ff6b6b;}
+
+.cart-icon{
+position:fixed;top:20px;right:20px;
+background:#fff;padding:12px;border-radius:50%;
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
+cursor:pointer;z-index:1000;
+}
+.cart-count{
+position:absolute;top:-5px;right:-5px;
+background:#ff4757;color:#fff;
+width:20px;height:20px;border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+font-size:12px;
+}
+
+.cart-modal{
+position:fixed;top:0;right:-100%;width:350px;height:100%;
+background:#fff;box-shadow:-5px 0 20px rgba(0,0,0,0.2);
+padding:20px;transition:0.4s;overflow-y:auto;z-index:2000;
+}
+.cart-modal.active{right:0;}
+.cart-item{margin-bottom:10px;font-size:14px;}
+.total{font-weight:600;margin:10px 0;}
+
+input{
+width:100%;padding:10px;margin:8px 0;
+border-radius:8px;border:1px solid #ccc;
+}
+
+.whatsapp{
+position:fixed;bottom:20px;right:20px;
+background:#25D366;color:#fff;padding:15px;
+border-radius:50%;font-size:20px;
+box-shadow:0 4px 15px rgba(0,0,0,0.3);
+text-decoration:none;
+}
+
+@media(min-width:768px){
+.hero-content h1{font-size:3.5rem;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- CART ICON -->
+<div class="cart-icon" onclick="toggleCart()">
+🛒
+<div class="cart-count" id="cartCount">0</div>
+</div>
+
+<!-- HERO SECTION -->
+<header>
+<div class="hero-content">
+<h1>SK Local Shop</h1>
+<p>“Fresh Finds, Best Prices”</p>
+<button class="btn" onclick="document.getElementById('products').scrollIntoView()">Shop Now</button>
+</div>
+</header>
+
+<!-- PRODUCTS -->
+<section id="products">
+<h2 class="section-title">Our Products</h2>
+<div class="carousel">
+<div class="product">
+<img src="https://i.ibb.co/23SjQdNz/IMG-20260219-133317.jpg">
+<h3>Product 1</h3>
+<p>₹199</p>
+<button class="btn" onclick="addToCart('Product 1',199)">Add to Cart</button>
+</div>
+
+<div class="product">
+<img src="https://i.ibb.co/GvPgmQX7/IMG-20260228-224102.jpg">
+<h3>Product 2</h3>
+<p>₹249</p>
+<button class="btn" onclick="addToCart('Product 2',249)">Add to Cart</button>
+</div>
+
+<div class="product">
+<img src="https://i.ibb.co/LXLHPNj3/IMG-20260228-224021.jpg">
+<h3>Product 3</h3>
+<p>₹299</p>
+<button class="btn" onclick="addToCart('Product 3',299)">Add to Cart</button>
+</div>
+
+<div class="product">
+<img src="https://i.ibb.co/5DtQfJv/IMG-20260228-224047.jpg">
+<h3>Product 4</h3>
+<p>₹349</p>
+<button class="btn" onclick="addToCart('Product 4',349)">Add to Cart</button>
+</div>
+</div>
+</section>
+
+<!-- CART MODAL -->
+<div class="cart-modal" id="cartModal">
+<h2>Your Cart</h2>
+<div id="cartItems"></div>
+<div class="total">Total: ₹<span id="totalPrice">0</span></div>
+
+<h3>Customer Details</h3>
+<input type="text" id="name" placeholder="Your Name" required>
+<input type="tel" id="phone" placeholder="Phone Number" required>
+<input type="email" id="email" placeholder="Email (optional)">
+
+<button class="btn" onclick="sendOrder()">Send Order</button>
+</div>
+
+<!-- WhatsApp -->
+<a class="whatsapp" href="https://wa.me/7828951832" target="_blank">💬</a>
+
+<script>
+emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
+
+let cart=[];
+function toggleCart(){
+document.getElementById("cartModal").classList.toggle("active");
+}
+
+function addToCart(name,price){
+let item=cart.find(i=>i.name===name);
+if(item){item.qty++;}
+else{cart.push({name,price,qty:1});}
+updateCart();
+}
+
+function updateCart(){
+let cartItems=document.getElementById("cartItems");
+let total=0;
+cartItems.innerHTML="";
+cart.forEach(item=>{
+total+=item.price*item.qty;
+cartItems.innerHTML+=`<div class="cart-item">${item.name} x ${item.qty}</div>`;
+});
+document.getElementById("totalPrice").innerText=total;
+document.getElementById("cartCount").innerText=cart.length;
+}
+
+function sendOrder(){
+let name=document.getElementById("name").value;
+let phone=document.getElementById("phone").value;
+let email=document.getElementById("email").value;
+let total=document.getElementById("totalPrice").innerText;
+
+if(!name || !phone){alert("Please fill required fields");return;}
+
+let orderList=cart.map(i=>`${i.name} x ${i.qty}`).join(", ");
+
+let templateParams={
+customer_name:name,
+phone:phone,
+email:email,
+order_details:orderList,
+total_price:total
+};
+
+emailjs.send("YOUR_SERVICE_ID","YOUR_TEMPLATE_ID",templateParams)
+.then(()=>{alert("Order Sent Successfully!");cart=[];updateCart();})
+.catch(()=>alert("Error Sending Order"));
+}
+</script>
+
+</body>
+</html>
