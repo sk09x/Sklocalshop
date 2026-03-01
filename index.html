@@ -1,571 +1,602 @@
-<think>
-The user wants a complete single-page shopkeeper website using only HTML, CSS, and JavaScript.
-
-Here are the specific requirements:
-1.  **Shop Details**:
-    *   Name: SK Local Shop
-    *   Tagline: "Fresh Finds, Best Prices"
-    *   Owner Email: shivamkush901@gmail.com
-
-2.  **Hero Section**:
-    *   Full-width responsive hero image (URL provided).
-    *   Large heading + tagline.
-    *   "Shop Now" button that smooth scrolls to products.
-
-3.  **Product Carousel**:
-    *   Horizontal scrollable/auto-sliding.
-    *   Responsive (mobile-first).
-    *   Product Card: Image, Name, Price, "Add to Cart" button.
-    *   Images provided.
-
-4.  **Cart & Order Feature**:
-    *   Floating cart icon (top/right).
-    *   Shows item count.
-    *   Opens a drawer/modal.
-    *   Lists: Product, Quantity, Total Price.
-
-5.  **Order Form Integration**:
-    *   Inside cart modal.
-    *   Fields: Name, Phone, Email (optional).
-
-6.  **Email Integration**:
-    *   Use EmailJS.
-    *   "Send Order" button sends details to owner email.
-    *   Details: Name, Phone, Items, Total.
-
-7.  **WhatsApp Button**:
-    *   Floating bottom right.
-    *   Link to specific WhatsApp number.
-
-8.  **Design**:
-    *   Clean, modern, mobile-first.
-    *   Smooth scrolling.
-    *   Soft shadows, rounded corners, hover effects.
-
-**Plan of Action:**
-
-1.  **HTML Structure**:
-    *   Header with Logo and Cart Icon.
-    *   Hero Section.
-    *   Product Carousel Section.
-    *   Footer.
-    *   Modal structure for the Cart/Checkout.
-    *   Floating WhatsApp button.
-
-2.  **CSS**:
-    *   Reset/Normalize.
-    *   Variables for colors (Fresh/Grocery theme implies Green/Orange/White usually, but I'll stick to a clean modern palette).
-    *   Hero styling.
-    *   Carousel styling (using CSS scroll-snap or flexbox for simplicity without heavy libraries).
-    *   Card styling.
-    *   Modal styling (fixed position, overlay).
-    *   Responsive media queries.
-    *   Animations/Transitions.
-
-3.  **JavaScript**:
-    *   **Product Data**: Create an array of objects for the products.
-    *   **Cart State**: Manage an array for cart items.
-    *   **DOM Manipulation**: Render products to the carousel. Update cart UI (count, list, total).
-    *   **Event Listeners**: Add to cart, remove from cart, open/close modal, scroll.
-    *   **EmailJS**:
-        *   Need to include the EmailJS SDK script.
-        *   Initialize with public key (I cannot generate a real key for the user, they must provide their own or I will put placeholders). *Correction*: I will set up the code structure where the user needs to plug in their specific credentials (Public Key, Service ID, Template ID).
-    *   **WhatsApp**: Simple `<a>` tag with `target="_blank"`.
-
-**Specific details to handle:**
-*   Images: The URLs provided have special characters at the end (like ``). I need to clean them up or assume they are just raw links. The prompt shows:
-    *   `https://i.ibb.co/bRvSR5Dr/05b272fab8e792fac1d6183ee853d97e.jpg` (Hero)
-    *   Product 1: `https://i.ibb.co/23SjQdNz/IMG-20260219-133317.jpg`
-    *   Product 2: `https://i.ibb.co/GvPgmQX7/IMG-20260228-224102.jpg`
-    *   etc.
-*   EmailJS: I will write the code to use EmailJS but leave comments instructing the user where to enter their keys. Since I cannot execute backend logic, I will assume the user will follow instructions to fill the `YOUR_PUBLIC_KEY`, `YOUR_SERVICE_ID`, `YOUR_TEMPLATE_ID`.
-
-**Refining the Design:**
-*   Color Palette: Primary Green (Freshness), White background, Dark text, Accent Orange (Call to action).
-*   Font: 'Poppins' or 'Roboto' via Google Fonts.
-
-**Step-by-Step Implementation:**
-
-1.  **Head**: Meta tags, Google Fonts, FontAwesome (for icons), EmailJS SDK.
-2.  **Body**:
-    *   Navbar (Logo, Cart count).
-    *   Hero.
-    *   Products Container.
-    *   Cart Modal (Hidden by default).
-    *   WhatsApp Button.
-3.  **JS**:
-    *   Product Array.
-    *   `renderProducts()` function.
-    *   `addToCart(id)` function.
-    *   `updateCartUI()` function.
-    *   `sendOrder()` function (EmailJS logic).
-
-**Self-Correction/Constraint Check:**
-*   "No backend required": Confirmed, EmailJS handles the email part via client-side JS.
-*   "Single-page": All in one HTML file (or logically separated blocks which I will combine into a single copy-pasteable block).
-
-Let's write the code.
-
-*Note on EmailJS*: The user needs their own keys. I will add placeholders `YOUR_PUBLIC_KEY`, `SERVICE_ID`, `TEMPLATE_ID`. I'll also provide a fallback alert if EmailJS fails or isn't configured, so the user sees something happens.
-
-*Note on Images*: I will copy the URLs exactly as provided in the prompt, ensuring they are valid strings.
-
-*WhatsApp Link*: `https://wa.me/7828951832`
-
-Let's construct the final HTML.
-
-**Code Structure:**
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-... CSS ...
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>SK Local Shop | Fresh Finds, Best Prices</title>
+  <!-- Google Fonts & EmailJS SDK -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: #fafbfc;
+      color: #1e2b37;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    /* modern scrollbar (optional) */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f0f2f5; border-radius: 8px; }
+    ::-webkit-scrollbar-thumb { background: #b0bec5; border-radius: 8px; }
+
+    /* floating elements */
+    .floating-cart, .floating-wa {
+      position: fixed;
+      z-index: 40;
+      border: none;
+      border-radius: 50%;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.15), 0 4px 12px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .floating-cart {
+      top: 20px; right: 20px;
+      width: 56px; height: 56px;
+      background: #1e2b37;
+      color: white;
+      font-size: 24px;
+    }
+    .floating-cart span {
+      position: absolute;
+      top: -4px; right: -4px;
+      background: #d32f2f;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      min-width: 24px; height: 24px;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+      border: 2px solid white;
+    }
+    .floating-wa {
+      bottom: 24px; right: 20px;
+      width: 60px; height: 60px;
+      background: #25D366;
+      font-size: 32px;
+      color: white;
+      text-decoration: none;
+    }
+    .floating-cart:hover, .floating-wa:hover {
+      transform: scale(1.08);
+      box-shadow: 0 18px 32px rgba(0,0,0,0.2);
+    }
+
+    /* cart drawer */
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: -100%;
+      width: 100%; max-width: 400px;
+      height: 100vh;
+      background: white;
+      z-index: 100;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+      transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+      border-radius: 24px 0 0 24px;
+    }
+    .cart-drawer.open { right: 0; }
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 28px;
+    }
+    .close-drawer {
+      background: none;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+      color: #7f8c8d;
+      transition: color 0.2s;
+    }
+    .close-drawer:hover { color: #1e2b37; }
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid #edf2f7;
+    }
+    .cart-item-img {
+      width: 60px; height: 60px;
+      border-radius: 16px;
+      object-fit: cover;
+      background: #f1f5f9;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .cart-item-info { flex: 1; }
+    .cart-item-title { font-weight: 600; }
+    .cart-item-price { color: #2d3e50; font-weight: 500; margin: 4px 0; }
+    .cart-qty {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .cart-qty button {
+      background: #edf2f7;
+      border: none;
+      width: 28px; height: 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 18px;
+      cursor: pointer;
+      color: #1e2b37;
+      transition: 0.15s;
+    }
+    .cart-qty button:hover { background: #d0ddee; }
+    .cart-total-row {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 18px;
+      padding: 20px 0 10px;
+      border-top: 2px dashed #dce5ec;
+    }
+
+    /* order form inside drawer */
+    .order-section {
+      background: #f8fafd;
+      padding: 20px 16px;
+      border-radius: 28px;
+      margin-top: 8px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .order-form input {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 8px 0;
+      border: 1px solid #dde7f0;
+      border-radius: 24px;
+      font-size: 16px;
+      background: white;
+      transition: 0.2s;
+    }
+    .order-form input:focus {
+      outline: none;
+      border-color: #1e2b37;
+      box-shadow: 0 0 0 3px rgba(30,43,55,0.15);
+    }
+    .send-order-btn {
+      background: #1e2b37;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 18px;
+      width: 100%;
+      margin-top: 16px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+    }
+    .send-order-btn:hover { background: #2c3e50; transform: scale(1.01);}
+
+    /* main layout */
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)), url('https://i.ibb.co/bRvSR5Dr/05b272fab8e792fac1d6183ee853d97e.jpg') center/cover no-repeat;
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      color: white;
+      border-radius: 0 0 40px 40px;
+      box-shadow: 0 20px 30px -10px rgba(0,0,0,0.2);
+    }
+    .hero-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 12vw, 5.2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .hero p {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      margin: 1.2rem 0 2.2rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+    .shop-now-btn {
+      background: white;
+      color: #1e2b37;
+      border: none;
+      padding: 18px 48px;
+      border-radius: 60px;
+      font-size: 1.4rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 18px 28px -8px rgba(0,0,0,0.3);
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .shop-now-btn:hover {
+      background: #f0f5fa;
+      transform: scale(1.04);
+      box-shadow: 0 24px 36px -8px black;
+    }
+
+    /* product section */
+    .product-section {
+      padding: 40px 16px 60px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin: 20px 0 28px 8px;
+      letter-spacing: -0.02em;
+    }
+    .carousel {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 8px 4px 20px;
+      scrollbar-width: thin;
+    }
+    .product-card {
+      flex: 0 0 260px;
+      background: white;
+      border-radius: 32px;
+      padding: 18px 16px 22px;
+      box-shadow: 0 12px 28px -8px rgba(0,20,30,0.12);
+      transition: transform 0.2s, box-shadow 0.3s;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 38px -12px rgba(0,40,60,0.22);
+    }
+    .product-img {
+      width: 100%; aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 24px;
+      background: #eef2f6;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+    .product-name {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 6px;
+    }
+    .product-price {
+      font-weight: 600;
+      color: #1e2b37;
+      font-size: 1.3rem;
+      margin: 10px 0 12px;
+    }
+    .add-to-cart {
+      background: #1e2b37;
+      border: none;
+      color: white;
+      padding: 14px 10px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 8px 16px -5px rgba(0,0,0,0.15);
+      margin-top: auto;
+    }
+    .add-to-cart:hover { background: #2c4052; transform: scale(1.02);}
+
+    /* overlay for drawer */
+    .overlay {
+      position: fixed;
+      top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(3px);
+      z-index: 90;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .overlay.show { opacity: 1; pointer-events: all; }
+
+    /* mobile adjustments */
+    @media (max-width: 600px) {
+      .hero { min-height: 80vh; border-radius: 0 0 32px 32px; }
+      .cart-drawer { max-width: 100%; border-radius: 24px 0 0 24px; }
+      .product-card { flex: 0 0 200px; }
+    }
+
+    /* utility */
+    .toast-msg {
+      visibility: hidden;
+      background: #1e2b37;
+      color: white;
+      text-align: center;
+      padding: 12px 20px;
+      border-radius: 60px;
+      position: fixed;
+      bottom: 30px; left: 20px; right: 20px;
+      max-width: 300px; margin: 0 auto;
+      box-shadow: 0 8px 24px black;
+      z-index: 200;
+      font-weight: 500;
+    }
+    .toast-msg.show { visibility: visible; animation: fadein 0.3s; }
+    @keyframes fadein { from {opacity: 0;} to {opacity: 1;} }
+  </style>
 </head>
 <body>
-... HTML ...
-... JS ...
+  <!-- floating icons -->
+  <button class="floating-cart" id="cartToggleBtn" aria-label="Open cart">
+    🛒 <span id="cartCount">0</span>
+  </button>
+  <a href="https://wa.me/7828951832" target="_blank" class="floating-wa" aria-label="WhatsApp">💬</a>
+
+  <!-- cart drawer -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="drawer-header">
+      <span>Your basket</span>
+      <button class="close-drawer" id="closeDrawerBtn">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItemsContainer">
+      <!-- dynamic cart items -->
+    </div>
+    <div class="cart-total-row" id="cartTotalPrice">Total: ₹0</div>
+    <!-- order form inside drawer -->
+    <div class="order-section">
+      <div class="order-form">
+        <input type="text" id="custName" placeholder="Full name *" required>
+        <input type="tel" id="custPhone" placeholder="Phone number *" required>
+        <input type="email" id="custEmail" placeholder="Email (optional)">
+        <button class="send-order-btn" id="sendOrderBtn">📦 Send Order</button>
+      </div>
+    </div>
+  </div>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- toast message placeholder -->
+  <div id="toast" class="toast-msg"></div>
+
+  <!-- main content -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>SK Local Shop</h1>
+      <p>Fresh Finds, Best Prices</p>
+      <button class="shop-now-btn" id="heroShopNow">Shop Now</button>
+    </div>
+  </section>
+
+  <section class="product-section" id="products">
+    <h2 class="section-title">Fresh Picks</h2>
+    <div class="carousel" id="productCarousel"></div>
+  </section>
+
+  <script>
+    (function() {
+      // ---------- EmailJS init ----------
+      emailjs.init("8Ck-UsXslDfsH9Wt6");   // public key
+
+      // ---------- data ----------
+      const products = [
+        { id: 1, name: "Organic Apple", price: 120, img: "https://i.ibb.co/23SjQdNz/IMG-20260219-133317.jpg" },
+        { id: 2, name: "Fresh Carrot", price: 80, img: "https://i.ibb.co/GvPgmQX7/IMG-20260228-224102.jpg" },
+        { id: 3, name: "Whole Wheat Bread", price: 55, img: "https://i.ibb.co/LXLHPNj3/IMG-20260228-224021.jpg" },
+        { id: 4, name: "Free Range Eggs", price: 190, img: "https://i.ibb.co/5DtQfJv/IMG-20260228-224047.jpg" }
+      ];
+
+      // cart state
+      let cart = JSON.parse(localStorage.getItem('skCart')) || [];
+
+      // DOM elements
+      const cartBtn = document.getElementById('cartToggleBtn');
+      const drawer = document.getElementById('cartDrawer');
+      const overlay = document.getElementById('overlay');
+      const closeDrawer = document.getElementById('closeDrawerBtn');
+      const cartCountSpan = document.getElementById('cartCount');
+      const cartItemsDiv = document.getElementById('cartItemsContainer');
+      const cartTotalSpan = document.getElementById('cartTotalPrice');
+      const heroShopNow = document.getElementById('heroShopNow');
+      const productCarousel = document.getElementById('productCarousel');
+      const toast = document.getElementById('toast');
+      const sendOrderBtn = document.getElementById('sendOrderBtn');
+
+      // helper toast
+      function showToast(msg, duration = 2500) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), duration);
+      }
+
+      // update cart icon + save
+      function updateCartUI() {
+        let totalItems = cart.reduce((acc, i) => acc + i.qty, 0);
+        cartCountSpan.textContent = totalItems;
+
+        // render cart items
+        if (cartItemsDiv) {
+          if (cart.length === 0) {
+            cartItemsDiv.innerHTML = `<div style="padding: 30px 10px; text-align: center; color: #8899a8;">Your cart is empty</div>`;
+          } else {
+            let html = '';
+            cart.forEach((item, idx) => {
+              html += `
+                <div class="cart-item" data-index="${idx}">
+                  <img src="${item.img}" class="cart-item-img" alt="${item.name}">
+                  <div class="cart-item-info">
+                    <div class="cart-item-title">${item.name}</div>
+                    <div class="cart-item-price">₹${item.price}</div>
+                    <div class="cart-qty">
+                      <button class="qty-minus" data-id="${item.id}">−</button>
+                      <span>${item.qty}</span>
+                      <button class="qty-plus" data-id="${item.id}">+</button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            });
+            cartItemsDiv.innerHTML = html;
+          }
+        }
+        // total
+        let total = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+        cartTotalSpan.innerText = `Total: ₹${total}`;
+        localStorage.setItem('skCart', JSON.stringify(cart));
+
+        // attach qty events
+        document.querySelectorAll('.qty-plus').forEach(btn => {
+          btn.removeEventListener('click', handlePlus);
+          btn.addEventListener('click', handlePlus);
+        });
+        document.querySelectorAll('.qty-minus').forEach(btn => {
+          btn.removeEventListener('click', handleMinus);
+          btn.addEventListener('click', handleMinus);
+        });
+      }
+
+      function handlePlus(e) {
+        const id = Number(e.target.dataset.id);
+        const item = cart.find(p => p.id === id);
+        if (item) { item.qty += 1; }
+        updateCartUI();
+      }
+      function handleMinus(e) {
+        const id = Number(e.target.dataset.id);
+        const idx = cart.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          if (cart[idx].qty > 1) { cart[idx].qty -= 1; }
+          else { cart.splice(idx, 1); }
+        }
+        updateCartUI();
+      }
+
+      // add to cart
+      function addToCart(product) {
+        const existing = cart.find(p => p.id === product.id);
+        if (existing) existing.qty += 1;
+        else cart.push({ ...product, qty: 1 });
+        updateCartUI();
+        showToast(`🛒 ${product.name} added`);
+      }
+
+      // render product cards
+      function renderProducts() {
+        productCarousel.innerHTML = products.map(p => `
+          <div class="product-card">
+            <img src="${p.img}" class="product-img" alt="${p.name}" loading="lazy">
+            <div class="product-name">${p.name}</div>
+            <div class="product-price">₹${p.price}</div>
+            <button class="add-to-cart" data-id="${p.id}">Add to Cart</button>
+          </div>
+        `).join('');
+        // attach events
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = Number(e.target.dataset.id);
+            const prod = products.find(p => p.id === id);
+            if (prod) addToCart(prod);
+          });
+        });
+      }
+
+      // Drawer open/close
+      function openDrawer() { drawer.classList.add('open'); overlay.classList.add('show'); }
+      function closeDrawerFn() { drawer.classList.remove('open'); overlay.classList.remove('show'); }
+      cartBtn.addEventListener('click', openDrawer);
+      closeDrawer.addEventListener('click', closeDrawerFn);
+      overlay.addEventListener('click', closeDrawerFn);
+
+      // smooth scroll to products
+      heroShopNow.addEventListener('click', () => {
+        document.getElementById('products').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      // send order via EmailJS
+      sendOrderBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('custName').value.trim();
+        const phone = document.getElementById('custPhone').value.trim();
+        const email = document.getElementById('custEmail').value.trim();
+
+        if (!name || !phone) {
+          showToast('⚠️ Name & phone are required', 2500);
+          return;
+        }
+        if (cart.length === 0) {
+          showToast('🛒 Cart is empty', 2000);
+          return;
+        }
+
+        // build order summary
+        const itemList = cart.map(i => `${i.name} (x${i.qty}) ₹${i.price*i.qty}`).join('\n');
+        const total = cart.reduce((acc,i) => acc + i.price * i.qty, 0);
+        const message = `Order from ${name}\nPhone: ${phone}\nEmail: ${email || '—'}\nItems:\n${itemList}\nTotal: ₹${total}`;
+
+        const templateParams = {
+          to_name: "Shop Owner",
+          customer_name: name,
+          customer_phone: phone,
+          customer_email: email || 'not provided',
+          order_details: itemList,
+          total_price: `₹${total}`,
+          message: message,
+          from_name: name,
+          reply_to: email || 'no-reply@local.local'
+        };
+
+        emailjs.send('service_deccs1c', 'template_sta3gch', templateParams)
+          .then(() => {
+            showToast('✅ Order sent to shop!', 3000);
+            // optional: clear cart after successful order
+            cart = [];
+            updateCartUI();
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            document.getElementById('custEmail').value = '';
+            closeDrawerFn();
+          })
+          .catch((err) => {
+            console.error('EmailJS error:', err);
+            showToast('❌ Failed. Check console or network', 3500);
+          });
+      });
+
+      // initial load
+      renderProducts();
+      updateCartUI();
+
+      // close drawer on escape
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawerFn(); });
+
+      // whatsApp link opens in new tab (already in href)
+    })();
+  </script>
+  <!-- tiny footer note (optional) -->
+  <footer style="text-align: center; padding: 24px 10px; color: #94a3b8; border-top: 1px solid #ecf3f8;">SK Local Shop — Fresh Finds, Best Prices</footer>
 </body>
 </html>
-```
-
-**CSS Details:**
-*   `scroll-behavior: smooth` for html.
-*   Flexbox for layout.
-*   Media queries for mobile (stack products, adjust font sizes).
-
-**JS Logic:**
-*   `cart = []`
-*   `products = [...]` (Hardcoded with provided images).
-*   Cart logic needs to handle duplicates (increment quantity).
-
-Let's assemble.
-</think>Here is the complete code for the **SK Local Shop** website. It includes the HTML structure, CSS styling, and JavaScript logic (including the EmailJS integration setup) all in one file.
-
-### Instructions to Run:
-1.  Create a new file named `index.html` on your computer.
-2.  Paste the code below into that file.
-3.  **Important for Email:** To make the "Send Order" button work, you need an [EmailJS](https://www.emailjs.com/) account (it's free). Replace the placeholders in the JavaScript section (`YOUR_PUBLIC_KEY`, `YOUR_SERVICE_ID`, `YOUR_TEMPLATE_ID`) with your actual EmailJS credentials.
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SK Local Shop | Fresh Finds, Best Prices</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- EmailJS SDK -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
-    <style>
-        /* --- CSS Variables & Reset --- */
-        :root {
-            --primary-color: #2ecc71; /* Fresh Green */
-            --primary-dark: #27ae60;
-            --secondary-color: #ff6b6b; /* Accent Red/Orange */
-            --text-dark: #333;
-            --text-light: #777;
-            --bg-light: #f9f9f9;
-            --white: #ffffff;
-            --shadow: 0 4px 15px rgba(0,0,0,0.1);
-            --radius: 12px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            overflow-x: hidden;
-        }
-
-        /* --- Navigation --- */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 5%;
-            background: var(--white);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .cart-icon {
-            position: relative;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--text-dark);
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: -8px;
-            right: -10px;
-            background: var(--secondary-color);
-            color: white;
-            font-size: 0.8rem;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-        }
-
-        /* --- Hero Section --- */
-        .hero {
-            width: 100%;
-            height: 80vh;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://i.ibb.co/bRvSR5Dr/05b272fab8e792fac1d6183ee853d97e.jpg');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: var(--white);
-            padding: 0 20px;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        /* --- Product Section --- */
-        .products-section {
-            padding: 4rem 5%;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-            font-size: 2rem;
-            color: var(--text-dark);
-        }
-
-        /* Carousel Container */
-        .carousel-container {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding-bottom: 20px;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Hide scrollbar for cleaner look */
-        .carousel-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        .carousel-container::-webkit-scrollbar-thumb {
-            background: #ccc;
-            border-radius: 4px;
-        }
-
-        /* Product Card */
-        .product-card {
-            min-width: 280px;
-            background: var(--white: var(--radius);
-            border-radius);
-            box-shadow: var(--shadow);
-            scroll-snap-align: start;
-            transition: transform 0.3s ease;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .product-img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-
-        .product-info {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-            justify-content: space-between;
-        }
-
-        .product-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .product-price {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-        }
-
-        .add-btn {
-            width: 100%;
-            padding: 10px;
-            background: var(--text-dark);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .add-btn:hover {
-            background: var(--primary-color);
-        }
-
-        /* --- Cart Modal --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            display: none;
-            justify-content: flex-end;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .cart-modal {
-            width: 100%;
-            max-width: 400px;
-            background: var(--white);
-            height: 100%;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-        }
-
-        .modal-overlay.active .cart-modal {
-            transform: translateX(0);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .close-modal {
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-light);
-        }
-
-        .cart-items-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .cart-item-details h4 {
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .qty-btn {
-            width: 25px;
-            height: 25px;
-            border: 1px solid #ddd;
-            background: #f9f9f9;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .remove-item {
-            color: var(--secondary-color);
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .cart-total {
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-align: right;
-            margin-bottom: 20px;
-        }
-
-        /* Order Form */
-        .order-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: auto;
-        }
-
-        .order-form input {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-
-        .send-order-btn {
-            background: var(--primary-color);
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .send-order-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        /* --- WhatsApp Float --- */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #25D366;
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 30px;
-            box-shadow: var(--shadow);
-            z-index: 99;
-            text-decoration: none;
-            transition: transform 0.3s;
-        }
-
-        .whatsapp-float:hover {
-            transform: scale(1.1);
-        }
-
-        /* --- Footer --- */
-        footer {
-            background: var(--text-dark);
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
-        }
-
-        /* --- Responsive --- */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .product-card { min-width: 240px; }
-            .cart-modal { width: 85%; }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Navbar -->
-    <nav>
-        <div class="logo">SK Local Shop</div>
-        <div class="cart-icon" onclick="toggleCart()">
-            <i class="fas fa-shopping-cart"></i>
-            <span class="cart-badge" id="cartCount">0</span>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>SK Local Shop</h1>
-        <p>“Fresh Finds, Best Prices”</p>
-        <a href="#products" class="btn">Shop Now</a>
-    </section>
-
-    <!-- Product Carousel -->
-    <section id="products" class="products-section">
-        <h2 class="section-title">Our Products</h2>
-        <div class="carousel-container" id="productContainer">
-            <!-- Products will be injected via JS -->
-        </div>
-    </section>
-
-    <!-- Cart Modal -->
-    <div
