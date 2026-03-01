@@ -1,0 +1,571 @@
+<think>
+The user wants a complete single-page shopkeeper website using only HTML, CSS, and JavaScript.
+
+Here are the specific requirements:
+1.  **Shop Details**:
+    *   Name: SK Local Shop
+    *   Tagline: "Fresh Finds, Best Prices"
+    *   Owner Email: shivamkush901@gmail.com
+
+2.  **Hero Section**:
+    *   Full-width responsive hero image (URL provided).
+    *   Large heading + tagline.
+    *   "Shop Now" button that smooth scrolls to products.
+
+3.  **Product Carousel**:
+    *   Horizontal scrollable/auto-sliding.
+    *   Responsive (mobile-first).
+    *   Product Card: Image, Name, Price, "Add to Cart" button.
+    *   Images provided.
+
+4.  **Cart & Order Feature**:
+    *   Floating cart icon (top/right).
+    *   Shows item count.
+    *   Opens a drawer/modal.
+    *   Lists: Product, Quantity, Total Price.
+
+5.  **Order Form Integration**:
+    *   Inside cart modal.
+    *   Fields: Name, Phone, Email (optional).
+
+6.  **Email Integration**:
+    *   Use EmailJS.
+    *   "Send Order" button sends details to owner email.
+    *   Details: Name, Phone, Items, Total.
+
+7.  **WhatsApp Button**:
+    *   Floating bottom right.
+    *   Link to specific WhatsApp number.
+
+8.  **Design**:
+    *   Clean, modern, mobile-first.
+    *   Smooth scrolling.
+    *   Soft shadows, rounded corners, hover effects.
+
+**Plan of Action:**
+
+1.  **HTML Structure**:
+    *   Header with Logo and Cart Icon.
+    *   Hero Section.
+    *   Product Carousel Section.
+    *   Footer.
+    *   Modal structure for the Cart/Checkout.
+    *   Floating WhatsApp button.
+
+2.  **CSS**:
+    *   Reset/Normalize.
+    *   Variables for colors (Fresh/Grocery theme implies Green/Orange/White usually, but I'll stick to a clean modern palette).
+    *   Hero styling.
+    *   Carousel styling (using CSS scroll-snap or flexbox for simplicity without heavy libraries).
+    *   Card styling.
+    *   Modal styling (fixed position, overlay).
+    *   Responsive media queries.
+    *   Animations/Transitions.
+
+3.  **JavaScript**:
+    *   **Product Data**: Create an array of objects for the products.
+    *   **Cart State**: Manage an array for cart items.
+    *   **DOM Manipulation**: Render products to the carousel. Update cart UI (count, list, total).
+    *   **Event Listeners**: Add to cart, remove from cart, open/close modal, scroll.
+    *   **EmailJS**:
+        *   Need to include the EmailJS SDK script.
+        *   Initialize with public key (I cannot generate a real key for the user, they must provide their own or I will put placeholders). *Correction*: I will set up the code structure where the user needs to plug in their specific credentials (Public Key, Service ID, Template ID).
+    *   **WhatsApp**: Simple `<a>` tag with `target="_blank"`.
+
+**Specific details to handle:**
+*   Images: The URLs provided have special characters at the end (like ``). I need to clean them up or assume they are just raw links. The prompt shows:
+    *   `https://i.ibb.co/bRvSR5Dr/05b272fab8e792fac1d6183ee853d97e.jpg` (Hero)
+    *   Product 1: `https://i.ibb.co/23SjQdNz/IMG-20260219-133317.jpg`
+    *   Product 2: `https://i.ibb.co/GvPgmQX7/IMG-20260228-224102.jpg`
+    *   etc.
+*   EmailJS: I will write the code to use EmailJS but leave comments instructing the user where to enter their keys. Since I cannot execute backend logic, I will assume the user will follow instructions to fill the `YOUR_PUBLIC_KEY`, `YOUR_SERVICE_ID`, `YOUR_TEMPLATE_ID`.
+
+**Refining the Design:**
+*   Color Palette: Primary Green (Freshness), White background, Dark text, Accent Orange (Call to action).
+*   Font: 'Poppins' or 'Roboto' via Google Fonts.
+
+**Step-by-Step Implementation:**
+
+1.  **Head**: Meta tags, Google Fonts, FontAwesome (for icons), EmailJS SDK.
+2.  **Body**:
+    *   Navbar (Logo, Cart count).
+    *   Hero.
+    *   Products Container.
+    *   Cart Modal (Hidden by default).
+    *   WhatsApp Button.
+3.  **JS**:
+    *   Product Array.
+    *   `renderProducts()` function.
+    *   `addToCart(id)` function.
+    *   `updateCartUI()` function.
+    *   `sendOrder()` function (EmailJS logic).
+
+**Self-Correction/Constraint Check:**
+*   "No backend required": Confirmed, EmailJS handles the email part via client-side JS.
+*   "Single-page": All in one HTML file (or logically separated blocks which I will combine into a single copy-pasteable block).
+
+Let's write the code.
+
+*Note on EmailJS*: The user needs their own keys. I will add placeholders `YOUR_PUBLIC_KEY`, `SERVICE_ID`, `TEMPLATE_ID`. I'll also provide a fallback alert if EmailJS fails or isn't configured, so the user sees something happens.
+
+*Note on Images*: I will copy the URLs exactly as provided in the prompt, ensuring they are valid strings.
+
+*WhatsApp Link*: `https://wa.me/7828951832`
+
+Let's construct the final HTML.
+
+**Code Structure:**
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+... CSS ...
+</head>
+<body>
+... HTML ...
+... JS ...
+</body>
+</html>
+```
+
+**CSS Details:**
+*   `scroll-behavior: smooth` for html.
+*   Flexbox for layout.
+*   Media queries for mobile (stack products, adjust font sizes).
+
+**JS Logic:**
+*   `cart = []`
+*   `products = [...]` (Hardcoded with provided images).
+*   Cart logic needs to handle duplicates (increment quantity).
+
+Let's assemble.
+</think>Here is the complete code for the **SK Local Shop** website. It includes the HTML structure, CSS styling, and JavaScript logic (including the EmailJS integration setup) all in one file.
+
+### Instructions to Run:
+1.  Create a new file named `index.html` on your computer.
+2.  Paste the code below into that file.
+3.  **Important for Email:** To make the "Send Order" button work, you need an [EmailJS](https://www.emailjs.com/) account (it's free). Replace the placeholders in the JavaScript section (`YOUR_PUBLIC_KEY`, `YOUR_SERVICE_ID`, `YOUR_TEMPLATE_ID`) with your actual EmailJS credentials.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK Local Shop | Fresh Finds, Best Prices</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        /* --- CSS Variables & Reset --- */
+        :root {
+            --primary-color: #2ecc71; /* Fresh Green */
+            --primary-dark: #27ae60;
+            --secondary-color: #ff6b6b; /* Accent Red/Orange */
+            --text-dark: #333;
+            --text-light: #777;
+            --bg-light: #f9f9f9;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: var(--secondary-color);
+            color: white;
+            font-size: 0.8rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            width: 100%;
+            height: 80vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://i.ibb.co/bRvSR5Dr/05b272fab8e792fac1d6183ee853d97e.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* --- Product Section --- */
+        .products-section {
+            padding: 4rem 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2rem;
+            color: var(--text-dark);
+        }
+
+        /* Carousel Container */
+        .carousel-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Hide scrollbar for cleaner look */
+        .carousel-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .carousel-container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        /* Product Card */
+        .product-card {
+            min-width: 280px;
+            background: var(--white: var(--radius);
+            border-radius);
+            box-shadow: var(--shadow);
+            scroll-snap-align: start;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .add-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--text-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .add-btn:hover {
+            background: var(--primary-color);
+        }
+
+        /* --- Cart Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            display: none;
+            justify-content: flex-end;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .cart-modal {
+            width: 100%;
+            max-width: 400px;
+            background: var(--white);
+            height: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .cart-modal {
+            transform: translateX(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .cart-items-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cart-item-details h4 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            width: 25px;
+            height: 25px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .remove-item {
+            color: var(--secondary-color);
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        /* Order Form */
+        .order-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .order-form input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .send-order-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .send-order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* --- WhatsApp Float --- */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25D366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            box-shadow: var(--shadow);
+            z-index: 99;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .product-card { min-width: 240px; }
+            .cart-modal { width: 85%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">SK Local Shop</div>
+        <div class="cart-icon" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" id="cartCount">0</span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>SK Local Shop</h1>
+        <p>“Fresh Finds, Best Prices”</p>
+        <a href="#products" class="btn">Shop Now</a>
+    </section>
+
+    <!-- Product Carousel -->
+    <section id="products" class="products-section">
+        <h2 class="section-title">Our Products</h2>
+        <div class="carousel-container" id="productContainer">
+            <!-- Products will be injected via JS -->
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div
